@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center min-h-screen transition duration-500 p-4"
+  >
+    <div
+      class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md mb-6"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h2
+          class="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center"
+        >
+          Welcome, <%= username ? username : 'Guest' %>!
+        </h2>
+      </div>
+
+      <p class="mb-4 text-gray-700 dark:text-gray-300 text-center">
+        You've successfully logged in!
+      </p>
+
+      <!-- Text Area for Creating a Post -->
+      <div>
+        <form action="/post" method="post">
+          <textarea
+            name="content"
+            id="postContent"
+            rows="4"
+            class="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
+            placeholder="What's on your mind?"
+          ></textarea>
+          <button
+            id="createPostBtn"
+            class="mt-4 block text-center w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Create Post
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- User's Posts Section -->
+    <div
+      class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md"
+    >
+    <!-- User's Posts Section -->
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
+  <h3 class="text-lg font-semibold mb-4">Posts</h3>
+  <div id="postList" class="posts flex flex-col space-y-4">
+    <% posts.forEach(post => { %>
+      <div class="p-4 border rounded-md bg-gray-50 dark:bg-gray-700">
+        <div class="text-sm text-gray-500 dark:text-gray-400"><%= post.user.username %> - <%= new Date(post.date).toLocaleDateString() %></div>
+        <p class="mt-2 text-gray-800 dark:text-gray-200"><%= post.content %></p>
+      </div>
+    <% }) %>
+    <% if (posts.length === 0) { %>
+      <p class="text-gray-500 dark:text-gray-400">No posts available.</p>
+    <% } %>
+  </div>
+</div>
+
+
+    <!-- Logout Button -->
+    <div class="mt-4">
+      <a
+        href="/logout"
+        class="block text-center w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+        >Logout</a
+      >
+    </div>
+  </body>
+</html>

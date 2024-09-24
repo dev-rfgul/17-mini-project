@@ -21,15 +21,12 @@ app.post('/register', async (req, res) => {
     try {
         let user = await userModel.findOne({ email });
         if (user) return res.send('User already exists');
-
         bcrypt.genSalt(10, (err, salt) => {
             if (err) return res.status(500).send('Error generating salt');
-
             bcrypt.hash(password, salt, async (err, hash) => {
                 if (err) return res.status(500).send('Error hashing password');
-
                 try {
-                    // Create the new user and await the creation
+                    //   Create the new user and await the creation
                     let newUser = await userModel.create({
                         username,
                         name,
@@ -37,15 +34,13 @@ app.post('/register', async (req, res) => {
                         email,
                         password: hash,
                     });
-
-                    // Use the newly created user's _id for the JWT
+                    //   Use the newly created user's _id for the JWT
                     let token = jwt.sign({ email: newUser.email, userid: newUser._id }, 'secretkey');
-
-                    // Set the token in the cookie and send success response
+                    //   Set the token in the cookie and send success response
                     res.cookie('token', token);
                     res.send('User registered');
                 } catch (err) {
-                    // Handle errors during user creation
+                    //   Handle errors during user creation
                     console.error('Error creating user:', err);
                     res.status(500).send('Error creating user');
                 }
@@ -70,7 +65,7 @@ app.post('/login', async (req, res) => {
             if (!result) return res.send('Incorrect Password');
             let token = jwt.sign({ email: user.email, userid: user._id }, 'secretkey');
             res.cookie('pwd-token', token);
-            res.render('welcom', { username: user.name });
+            res.render('profile', { username: user.name });
         })
     } catch (err) {
         console.error('Error registering user:', err);
@@ -82,27 +77,85 @@ app.get('/logout', (req, res) => {
     res.clearCookie('pwd-token');
     res.redirect('/login');
 })
-app.get('/post',isLoggedIn,(req,res)=>{
-    res.send('post page');
-})
-
-
-// this is called protected route as we have referenced this function to the profile route and it will check that if the user is logged in or not and then we have passed the user data to the next function as if the user is logged in we may need to acccess teh data in the profile route
-function isLoggedIn(req, res, next) {
-    // Ensure the token exists in the cookies
-    const token = req.cookies['pwd-token'];
-
-    if (!token) {
-        return res.status(401).send('You are not logged in'); // If token is missing
-    }
-
+app.get('/profile', isLoggedIn, async (req, res) => {
     try {
-        // Verify the JWT token
-        let data = jwt.verify(token, 'secretkey');
-        req.user = data; // Attach the user data to the request object
-        next();  // Proceed to the next middleware if token is valid
+        // Use populate to get the posts
+        const user = await userModel.findOne({ email: req.user.email }).populate('posts');
+        if (!user) return res.status(404).send('User not found');
+
+        // Pass both username and posts to the template
+        res.render('profile', { username: user.name, posts: user.posts });
     } catch (err) {
-        // If the token is invalid or expired, handle the error
+        console.error('Error fetching user:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+
+// app.post('/post', isLoggedIn, async (req, res) => {
+//     let user = await userModel.findOne({ email: req.user.email })
+//     const { content } = req.body;
+//     if (content) {
+//         const post = await postModel.create({
+//             user: user._id,
+//             content,
+//         });
+//         user.posts.push(post._id);
+//         //    Make sure `posts` is defined in your user schema
+//         await user.save();
+//     }
+//     res.redirect('/profile');
+//     console.log(user)
+// })
+
+
+//   this is called protected route as we have referenced this function to the profile route and it will check that if the user is logged in or not and then we have passed the user data to the next function as if the user is logged in we may need to acccess teh data in the profile route
+
+
+app.post('/post', isLoggedIn, async (req, res) => {
+    try {
+        let user = await userModel.findOne({ email: req.user.email });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+        
+        const { content } = req.body;
+        if (content) {
+            const post = await postModel.create({
+                user: user._id,
+                content,
+            });
+            user.posts.push(post._id); // Add the post ID to the user's posts
+            await user.save();
+        }
+        res.redirect('/profile');
+    } catch (err) {
+        console.error('Error creating post:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
+
+
+function isLoggedIn(req, res, next) {
+    //   Ensure the token exists in the cookies
+    const token = req.cookies['pwd-token'];
+    if (!token) {
+        return res.status(200).render('login');
+        //   If token is missing
+    }
+    try {
+        //   Verify the JWT token
+        let data = jwt.verify(token, 'secretkey');
+        req.user = data;
+        //   Attach the user data to the request object
+        next();
+        // Proceed to the next middleware if token is valid
+    } catch (err) {
+        //   If the token is invalid or expired, handle the error
         console.error('JWT verification error:', err);
         return res.status(401).send('Invalid or expired token');
     }
@@ -111,3 +164,5 @@ function isLoggedIn(req, res, next) {
 app.listen(3000, () => {
     console.log('Server running on port 3000');
 });
+
+
