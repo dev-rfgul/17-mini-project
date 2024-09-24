@@ -1,86 +1,162 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Creation</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class', // Enable dark mode using the class strategy
-    };
-  </script>
-  <script>
-    // Function to initialize the theme based on local storage
-    function initTheme() {
-      if (localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Creation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class", // Enable dark mode using the class strategy
+      };
+    </script>
+    <script>
+      // Function to initialize the theme based on local storage
+      function initTheme() {
+        if (localStorage.getItem("theme") === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
       }
-    }
 
-    // Function to toggle theme and store preference in local storage
-    function toggleTheme() {
-      if (document.documentElement.classList.contains('dark')) {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-      } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
+      // Function to toggle theme and store preference in local storage
+      function toggleTheme() {
+        if (document.documentElement.classList.contains("dark")) {
+          document.documentElement.classList.remove("dark");
+          localStorage.setItem("theme", "light");
+        } else {
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
+        }
       }
-    }
 
-    // Initialize theme on page load
-    document.addEventListener('DOMContentLoaded', initTheme);
-  </script>
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen transition duration-500">
-  <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center">Create User Account</h2>
-      <!-- Theme Toggle Button -->
-      <button id="theme-toggle" class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 p-2 rounded-full" onclick="toggleTheme()">
-        Toggle Theme
-      </button>
+      // Initialize theme on page load
+      document.addEventListener("DOMContentLoaded", initTheme);
+    </script>
+  </head>
+  <body
+    class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen transition duration-500"
+  >
+    <div
+      class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md"
+    >
+      <div class="flex justify-between items-center mb-6">
+        <h2
+          class="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center"
+        >
+          Create User Account
+        </h2>
+        <!-- Theme Toggle Button -->
+        <button
+          id="theme-toggle"
+          class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 p-2 rounded-full"
+          onclick="toggleTheme()"
+        >
+          Toggle Theme
+        </button>
+      </div>
+
+      <form action="/register" method="POST" class="space-y-4">
+        <!-- Username -->
+        <div>
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >Username</label
+          >
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your username"
+            required
+          />
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label
+            for="name"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >Name</label
+          >
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your name"
+            required
+          />
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >Email</label
+          >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <!-- Age -->
+        <div>
+          <label
+            for="age"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >Age</label
+          >
+          <input
+            type="number"
+            id="age"
+            name="age"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your age"
+            required
+          />
+        </div>
+
+        <!-- Password -->
+        <div>
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+            >Password</label
+          >
+          <input
+            type="password"
+            id="password"
+            name="password"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button
+            type="submit"
+            class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Create Account
+          </button>
+        </div>
+      </form>
+      <div class="mt-2">
+        <a href="/logout" class="block text-center w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Login</a>
+      </div>
     </div>
-    
-    <form action="/register" method="POST" class="space-y-4">
-      <!-- Username -->
-      <div>
-        <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
-        <input type="text" id="username" name="username" class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your username" required>
-      </div>
-      
-      <!-- Name -->
-      <div>
-        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
-        <input type="text" id="name" name="name" class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your name" required>
-      </div>
-
-      <!-- Email -->
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-        <input type="email" id="email" name="email" class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your email" required>
-      </div>
-
-      <!-- Age -->
-      <div>
-        <label for="age" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Age</label>
-        <input type="number" id="age" name="age" class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your age" required>
-      </div>
-
-      <!-- Password -->
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-        <input type="password" id="password" name="password" class="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your password" required>
-      </div>
-
-      <!-- Submit Button -->
-      <div>
-        <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Create Account</button>
-      </div>
-    </form>
-  </div>
-</body>
+    </div>
+  </body>
 </html>

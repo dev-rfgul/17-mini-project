@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class', // Enable dark mode using the class strategy
+    };
+  </script>
+  <script>
+    // Function to initialize the theme based on local storage
+    function initTheme() {
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.add('light');
+      } else {
+        document.documentElement.classList.remove('light');
+      }
+    }
+
+    // Function to toggle theme and store preference in local storage
+    function toggleTheme() {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    }
+
+    // Initialize theme on page load
+    document.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen transition duration-500">
+  <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center">Welcome, <%= username %>!</h2>
+      <!-- Theme Toggle Button -->
+      <button id="theme-toggle" class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-100 p-2 rounded-full" onclick="toggleTheme()">
+        Toggle Theme
+      </button>
+    </div>
+    
+    <p class="mb-4 text-gray-700 dark:text-gray-300 text-center">You've successfully logged in!</p>
+
+    <!-- Additional Content -->
+    <div>
+      <a href="/logout" class="block text-center w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Logout</a>
+    </div>
+  </div>
+</body>
+</html>
