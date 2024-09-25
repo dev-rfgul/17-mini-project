@@ -80,7 +80,7 @@ app.get('/profile', isLoggedIn, async (req, res) => {
         const user = await userModel.findOne({ email: req.user.email }).populate('posts');
         if (!user) return res.status(404).send('User not found');
         // Pass both username and posts to the template
-        res.render('profile', { username: user.name, posts: user.posts });
+        res.render('profile', { username: user.name, posts: user.posts, userid: user._id });
     } catch (err) {
         console.error('Error fetching user:', err);
         res.status(500).send('Server error');
@@ -90,7 +90,7 @@ app.get('/profile', isLoggedIn, async (req, res) => {
 app.get('/like/:id', isLoggedIn, async (req, res) => {
     try {
         let post = await postModel.findOne({ _id: req.params.id }).populate('user');
-        
+
         // Check if post exists
         if (!post) {
             return res.status(404).send("Post not found.");
@@ -119,6 +119,23 @@ app.get('/like/:id', isLoggedIn, async (req, res) => {
         console.error("Error details:", error); // Log full error details
         res.status(500).send(`An error occurred: ${error.message}`); // Send error details to client
     }
+});
+app.post('/update/:id', isLoggedIn, async (req, res) => {
+
+    let post = await postModel.findOneAndUpdate({ _id: req.params.id }, { content: req.body.content })
+    res.redirect('/profile');
+
+});
+
+app.get('/delete/:id', async (req, res) => {
+    let post = await postModel.deleteOne({ _id: req.params.id });
+    res.redirect('/profile');
+})
+app.get('/edit/:id', isLoggedIn, async (req, res) => {
+
+    let post = await postModel.findOne({ _id: req.params.id }).populate('user');
+    res.render('edit', { post })
+
 });
 
 

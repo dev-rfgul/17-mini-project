@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+        };
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex flex-col items-center min-h-screen transition duration-500 p-4">
+    <div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md mb-6">
+        <h1 class="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Edit Your Post</h1>
+        <!-- Text Area for Creating a Post -->
+        <form action="/update/<%=post._id%>" method="post">
+            <textarea
+                name="content"
+                id="postContent"
+                rows="6"
+                class="w-full p-4 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-200"
+                placeholder="What's on your mind?"
+                required
+            ><%=post.content%></textarea>
+            <button
+                id="createPostBtn"
+                class="mt-4 w-full bg-yellow-500 text-white py-2 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 transition duration-200 font-semibold"
+            >
+                Update Post
+            </button>
+        </form>
+    </div>
+
+    <!-- Logout Button -->
+    <div class="mt-6 w-full max-w-md">
+        <a
+            href="/logout"
+            class="block text-center w-full bg-red-500 text-white py-2 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-400 transition duration-200 font-semibold"
+        >
+            Logout
+        </a>
+    </div>
+</body>
+</html>

@@ -70,7 +70,11 @@
           </small>
 
           <div class="btns">
-            <a href="/like/<%=post.id%>">Like</a>
+            <a href="/like/<%= post.id %>">
+              <%= post.likes.indexOf(userid)? "Like" : "unlike" %>
+          </a>
+          <a href="/edit/<%=post.id%>">Edit</a> 
+          <a href="/delete/<%=post.id%>">Delete</a>
           </div>
         </div>
         <% }) %> <% if (posts.length === 0) { %>
