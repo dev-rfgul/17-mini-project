@@ -14,10 +14,8 @@ app.use(cookieParser());
 app.get('/', (req, res) => {
     res.render('index');
 });
-
 app.post('/register', async (req, res) => {
     let { username, password, age, email, name } = req.body;
-
     try {
         let user = await userModel.findOne({ email });
         if (user) return res.send('User already exists');
@@ -56,7 +54,6 @@ app.get('/login', (req, res) => {
 });
 app.post('/login', async (req, res) => {
     let { email, password } = req.body;
-
     try {
         let user = await userModel.findOne({ email });
         if (!user) return res.status(500).send('No User Registered');
@@ -65,6 +62,7 @@ app.post('/login', async (req, res) => {
             if (!result) return res.send('Incorrect Password');
             let token = jwt.sign({ email: user.email, userid: user._id }, 'secretkey');
             res.cookie('pwd-token', token);
+            res.redirect('/profile')
             res.render('profile', { username: user.name });
         })
     } catch (err) {
@@ -72,7 +70,6 @@ app.post('/login', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
 app.get('/logout', (req, res) => {
     res.clearCookie('pwd-token');
     res.redirect('/login');
@@ -82,7 +79,6 @@ app.get('/profile', isLoggedIn, async (req, res) => {
         // Use populate to get the posts
         const user = await userModel.findOne({ email: req.user.email }).populate('posts');
         if (!user) return res.status(404).send('User not found');
-
         // Pass both username and posts to the template
         res.render('profile', { username: user.name, posts: user.posts });
     } catch (err) {
@@ -91,43 +87,60 @@ app.get('/profile', isLoggedIn, async (req, res) => {
     }
 });
 
+app.get('/like/:id', isLoggedIn, async (req, res) => {
+    try {
+        let post = await postModel.findOne({ _id: req.params.id }).populate('user');
+        
+        // Check if post exists
+        if (!post) {
+            return res.status(404).send("Post not found.");
+        }
+
+        console.log(req.user);
+
+        // Ensure likes is an array
+        if (!Array.isArray(post.likes)) {
+            post.likes = []; // Initialize likes if it is not an array
+        }
+
+        // Check if user is already in likes
+        if (post.likes.indexOf(req.user.userid) === -1) {
+            post.likes.push(req.user.userid); // Add user to likes
+        } else {
+            post.likes.splice(post.likes.indexOf(req.user.userid), 1); // Remove user from likes
+        }
+
+        // Save the updated post
+        await post.save();
+
+        // Redirect after updating
+        res.redirect('/profile');
+    } catch (error) {
+        console.error("Error details:", error); // Log full error details
+        res.status(500).send(`An error occurred: ${error.message}`); // Send error details to client
+    }
+});
 
 
 
-// app.post('/post', isLoggedIn, async (req, res) => {
-//     let user = await userModel.findOne({ email: req.user.email })
-//     const { content } = req.body;
-//     if (content) {
-//         const post = await postModel.create({
-//             user: user._id,
-//             content,
-//         });
-//         user.posts.push(post._id);
-//         //    Make sure `posts` is defined in your user schema
-//         await user.save();
-//     }
-//     res.redirect('/profile');
-//     console.log(user)
-// })
 
 
-//   this is called protected route as we have referenced this function to the profile route and it will check that if the user is logged in or not and then we have passed the user data to the next function as if the user is logged in we may need to acccess teh data in the profile route
-
-
+// this is called protected route as we have referenced this function to the profile route and it will check that if the user is logged in or not and then we have passed the user data to the next function as if the user is logged in we may need to acccess teh data in the profile route
 app.post('/post', isLoggedIn, async (req, res) => {
     try {
         let user = await userModel.findOne({ email: req.user.email });
         if (!user) {
             return res.status(404).send('User not found');
         }
-        
+
         const { content } = req.body;
         if (content) {
             const post = await postModel.create({
                 user: user._id,
                 content,
             });
-            user.posts.push(post._id); // Add the post ID to the user's posts
+            user.posts.push(post._id);
+            // Add the post ID to the user's posts
             await user.save();
         }
         res.redirect('/profile');
@@ -136,10 +149,6 @@ app.post('/post', isLoggedIn, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
-
-
-
 function isLoggedIn(req, res, next) {
     //   Ensure the token exists in the cookies
     const token = req.cookies['pwd-token'];
@@ -160,9 +169,6 @@ function isLoggedIn(req, res, next) {
         return res.status(401).send('Invalid or expired token');
     }
 }
-
 app.listen(3000, () => {
     console.log('Server running on port 3000');
 });
-
-
