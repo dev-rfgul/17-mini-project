@@ -163,11 +163,6 @@ app.get('/edit/:id', isLoggedIn, async (req, res) => {
     res.render('edit', { post })
 
 });
-
-
-
-
-
 // this is called protected route as we have referenced this function to the profile route and it will check that if the user is logged in or not and then we have passed the user data to the next function as if the user is logged in we may need to acccess teh data in the profile route
 app.post('/post', isLoggedIn, async (req, res) => {
     try {
