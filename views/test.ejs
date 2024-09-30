@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dark Theme Input Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-900 text-gray-200">
+    <div class="flex items-center justify-center h-screen">
+      <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-bold mb-6 text-center text-white">
+          Upload file
+        </h2>
+        <form
+          action="/upload"
+          method="POST"
+          enctype="multipart/form-data"
+          class="space-y-4"
+        >
+          <!-- Name Input -->
+          <div>
+            <label for="name" class="block text-gray-300 font-semibold"
+              >Upload</label
+            >
+            <input
+              type="file"
+              id="name"
+              name="image"
+              class="mt-1 block w-full px-4 py-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-md shadow-sm focus:ring focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your name"
+              required
+            />
+          </div>
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button
+              type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

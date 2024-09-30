@@ -5,12 +5,40 @@ const postModel = require('./models/post');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+//this is used to generate unique names for file uploads to avoid duplication
+const crypto = require("crypto")
+// this pkg will handle the file extensions 
+const path = require('path')
+const multer = require('multer')
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/images/uploads')
+    },
+    filename: function (req, file, cb) {
+        crypto.randomBytes(12, (err, bytes) => {
+            //the file.original name have the original name of the uploaded file and it will extract the extension name from teh original name 
+            const fn = bytes.toString('hex') + path.extname(file.originalname)
+            cb(null, fn)
+        })
+
+    }
+})
+
+const upload = multer({ storage: storage })
+app.get('/test', (req, res) => {
+    res.render('test')
+})
+app.post('/upload',upload.single('image'), (req, res) => {
+    console.log(req.file)
+})
 app.get('/', (req, res) => {
     res.render('index');
 });
@@ -86,7 +114,6 @@ app.get('/profile', isLoggedIn, async (req, res) => {
         res.status(500).send('Server error');
     }
 });
-
 app.get('/like/:id', isLoggedIn, async (req, res) => {
     try {
         let post = await postModel.findOne({ _id: req.params.id }).populate('user');
@@ -126,7 +153,6 @@ app.post('/update/:id', isLoggedIn, async (req, res) => {
     res.redirect('/profile');
 
 });
-
 app.get('/delete/:id', async (req, res) => {
     let post = await postModel.deleteOne({ _id: req.params.id });
     res.redirect('/profile');
