@@ -5,17 +5,24 @@ const postModel = require('./models/post');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-//this is used to generate unique names for file uploads to avoid duplication
+
+// const upload = ('./config/multerconfig');
+
+// //this is used to generate unique names for file uploads to avoid duplication
 const crypto = require("crypto")
-// this pkg will handle the file extensions 
+// // this pkg will handle the file extensions 
 const path = require('path')
 const multer = require('multer')
 
+
 app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, "public")))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+
+// from line no 20 till 42 the code is of multer learning.
 
 
 const storage = multer.diskStorage({
@@ -28,15 +35,13 @@ const storage = multer.diskStorage({
             const fn = bytes.toString('hex') + path.extname(file.originalname)
             cb(null, fn)
         })
-
     }
 })
-
 const upload = multer({ storage: storage })
 app.get('/test', (req, res) => {
     res.render('test')
 })
-app.post('/upload',upload.single('image'), (req, res) => {
+app.post('/upload', upload.single('image'), (req, res) => {
     console.log(req.file)
 })
 app.get('/', (req, res) => {
@@ -108,7 +113,7 @@ app.get('/profile', isLoggedIn, async (req, res) => {
         const user = await userModel.findOne({ email: req.user.email }).populate('posts');
         if (!user) return res.status(404).send('User not found');
         // Pass both username and posts to the template
-        res.render('profile', { username: user.name, posts: user.posts, userid: user._id });
+        res.render('profile', { img: user.profilepic, username: user.name, posts: user.posts, userid: user._id });
     } catch (err) {
         console.error('Error fetching user:', err);
         res.status(500).send('Server error');
@@ -163,6 +168,32 @@ app.get('/edit/:id', isLoggedIn, async (req, res) => {
     res.render('edit', { post })
 
 });
+app.get('/profile/upload', (req, res) => {
+    res.render('profileupload')
+})
+app.post('/upload', isLoggedIn, upload.single('image'), async (req, res) => {
+    if (!req.file) {
+        return res.status(400).send("No file uploaded.");
+    }
+
+    try {
+        let user = await userModel.findOne({ email: req.user.email });
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        user.profilepic = `images/uploads/${req.file.filename}`;  // Assign new profile picture
+        await user.save();  // Save user with new profile picture
+        console.log('Profile picture updated successfully:', user.profilepic);
+        res.redirect('/profile');  // Redirect after successful upload
+    } catch (error) {
+        console.error('Error updating user profile picture:', error);
+        res.status(500).send("Internal server error.");
+    }
+});
+
+
+
 // this is called protected route as we have referenced this function to the profile route and it will check that if the user is logged in or not and then we have passed the user data to the next function as if the user is logged in we may need to acccess teh data in the profile route
 app.post('/post', isLoggedIn, async (req, res) => {
     try {

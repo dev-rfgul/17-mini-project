@@ -10,8 +10,10 @@ const userSchema = new mongoose.Schema({
     age: Number,
     email: String,
     password: String,
+    profilepic: { type: String, default: 'profile-img.png' },
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'post' }], // Ensure this exists
+
 });
 
 
-module.exports=mongoose.model('user',userSchema)
+module.exports = mongoose.model('user', userSchema)
