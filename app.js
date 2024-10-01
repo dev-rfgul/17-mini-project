@@ -16,6 +16,8 @@ const multer = require('multer')
 
 
 app.set('view engine', 'ejs');
+app.use(express.static('public'));
+
 app.use(express.static(path.join(__dirname, "public")))
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -41,9 +43,7 @@ const upload = multer({ storage: storage })
 app.get('/test', (req, res) => {
     res.render('test')
 })
-app.post('/upload', upload.single('image'), (req, res) => {
-    console.log(req.file)
-})
+
 app.get('/', (req, res) => {
     res.render('index');
 });
@@ -113,6 +113,7 @@ app.get('/profile', isLoggedIn, async (req, res) => {
         const user = await userModel.findOne({ email: req.user.email }).populate('posts');
         if (!user) return res.status(404).send('User not found');
         // Pass both username and posts to the template
+        // console.log(user)
         res.render('profile', { img: user.profilepic, username: user.name, posts: user.posts, userid: user._id });
     } catch (err) {
         console.error('Error fetching user:', err);
@@ -178,12 +179,14 @@ app.post('/upload', isLoggedIn, upload.single('image'), async (req, res) => {
 
     try {
         let user = await userModel.findOne({ email: req.user.email });
+        
         if (!user) {
             return res.status(404).send('User not found');
         }
-
+        console.log(user.profilepic)
         user.profilepic = `images/uploads/${req.file.filename}`;  // Assign new profile picture
         await user.save();  // Save user with new profile picture
+        console.log(user.profilepic)
         console.log('Profile picture updated successfully:', user.profilepic);
         res.redirect('/profile');  // Redirect after successful upload
     } catch (error) {
